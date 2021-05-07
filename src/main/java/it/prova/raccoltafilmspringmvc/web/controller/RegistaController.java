@@ -12,6 +12,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -55,7 +56,7 @@ public class RegistaController {
 			return "regista/insert";
 		}
 		registaService.inserisciNuovo(regista);
-		
+
 		redirectAttrs.addFlashAttribute("successMessage", "Operazione eseguita correttamente");
 		return "redirect:/regista";
 	}
@@ -91,5 +92,65 @@ public class RegistaController {
 
 		return new Gson().toJson(ja);
 	}
+
+	@GetMapping("/show/{idRegista}")
+	public String showRegista(@PathVariable(required = true) Long idRegista, Model model) {
+		model.addAttribute("show_reg_attr", registaService.caricaSingoloElemento(idRegista));
+		return "regista/show";
+	}
+
+	@GetMapping("/edit/{idRegista}")
+	public String editRegista(@PathVariable(required = true) Long idRegista, Model model) {
+		model.addAttribute("registi_attribute", registaService.caricaSingoloElemento(idRegista));
+		return "regista/edit";
+	}
+
+	@PostMapping("/edit/update")
+	public String updateRegista(@Valid @ModelAttribute("regista_attribute") Regista regista,
+			@Valid @ModelAttribute("idRegista") Long idRegista, BindingResult result,
+			RedirectAttributes redirectAttrs) {
+
+		if (result.hasErrors()) {
+			return "regista/edit";
+		}
+
+		regista.setId(idRegista);
+		registaService.aggiorna(regista);
+
+		redirectAttrs.addFlashAttribute("successMessage", "Operazione eseguita correttamente");
+		return "redirect:/regista";
+	}
+
+	@GetMapping("/delete/{idRegista}")
+	public String controllaDeleteRegista(@PathVariable(required = true) Long idRegista, Model model) {
+		model.addAttribute("regista_delete", registaService.caricaSingoloElemento(idRegista));
+		return "/regista/delete";
+	}
+
+	@PostMapping("/delete/execute")
+	public String controllaDeleteRegista(@Valid @ModelAttribute("idRegista") Long idRegista, BindingResult result,
+			RedirectAttributes redirectAttrs) {
+
+		if (!registaService.caricaSingoloElementoConFilms(idRegista).getFilms().isEmpty()) {
+			redirectAttrs.addFlashAttribute("errorMessage", "Impossibile eliminare registi con film ancora associati.");
+			return "redirect:/regista";
+		}
+		registaService.rimuovi(registaService.caricaSingoloElemento(idRegista));
+
+		redirectAttrs.addFlashAttribute("successMessage", "Operazione eseguita correttamente");
+		return "redirect:/regista";
+	}
+//-------------------------------by ANDRE------------------------------------------
+//-------altro modo di gestire eliminazione regista con film, utilizzando l'eccezione
+//-------della constraint key senza nessun caricamento eager fatto ad hoc
+//	
+//	try {
+//	registaService.rimuovi(regista);
+//	redirectAttrs.addFlashAttribute("successMessage", "Operazione eseguita correttamente");
+//} catch (Exception e) {
+//	e.printStackTrace();
+//	redirectAttrs.addFlashAttribute("errorMessage", "Non puoi eliminare un regista se ha i sui film.");
+//}
+//return "redirect:/regista";
 
 }

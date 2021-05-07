@@ -88,28 +88,28 @@
 							</div>
 						</div>
 						
-<!--  						<div class="form-row">-->
-<!--  						<div class="form-group col-md-6">-->	
-<!--  								<label for="registaSearchInput">Regista:</label>-->
-<!--  							<spring:bind path="regista.id">-->	
-<!--  									<input class="form-control ${status.error ? 'is-invalid' : ''}" type="text" id="registaSearchInput"-->
-<!--  										name="registaInput" value="${film_attribute.regista.nome}${empty film_attribute.regista.nome?'':' '}${film_attribute.regista.cognome}">-->
-<!--  								</spring:bind>-->
-<!--  								<input type="hidden" name="regista.id" id="registaId" value="${film_attribute.regista.id }">-->
-<!--  								<form:errors  path="regista.id" cssClass="error_field" />-->
-<!--	  					</div>-->
-<!--  						</div>-->
+  						<div class="form-row">
+  						<div class="form-group col-md-6">	
+  								<label for="registaSearchInput">Regista:</label>
+  							<spring:bind path="regista.id">
+  									<input class="form-control ${status.error ? 'is-invalid' : ''}" type="text" id="registaSearchInput"
+  										name="registaInput" value="${film_attribute.regista.nome}${empty film_attribute.regista.nome?'':' '}${film_attribute.regista.cognome}">
+  								</spring:bind>
+  								<input type="hidden" name="regista.id" id="registaId" value="${film_attribute.regista.id }">
+  								<form:errors  path="regista.id" cssClass="error_field" />
+	  					</div>
+  						</div>
 						
- 						<div class="form-row">	 
- 							<div class="form-group col-md-6"> 
- 								<label for="regista.id">Regista</label> 
- 							    <select class="form-control" id="regista.id" name="regista.id"> 
-							      	<c:forEach items="${registi_list_attribute }" var="registaItem"> 
-							      		<option value="${registaItem.id}" ${film_attribute.regista.id == registaItem.id?'selected':''} >${registaItem.nome } ${registaItem.cognome }</option>
-							      	</c:forEach> 
-							    </select> 
-							</div>
-						</div> 
+<!-- 						<div class="form-row">	 -->
+<!-- 							<div class="form-group col-md-6"> -->
+<!-- 								<label for="regista.id">Regista</label> -->
+<!--							    <select class="form-control" id="regista.id" name="regista.id"> -->
+<!--							      	<c:forEach items="${registi_list_attribute }" var="registaItem"> -->
+<!--							      		<option value="${registaItem.id}" ${film_attribute.regista.id == registaItem.id?'selected':''} >${registaItem.nome } ${registaItem.cognome }</option>-->
+<!--							      	</c:forEach>--> 
+<!--							    </select> -->
+<!--							</div>-->
+<!--  						</div> -->
 							
 						<button type="submit" name="submit" value="submit" id="submit" class="btn btn-primary">Conferma</button>
 						<input type="hidden" name="idFilm" value="${film_attribute.id}">
@@ -120,7 +120,7 @@
 						$("#registaSearchInput").autocomplete({
 							 source: function(request, response) {
 							        $.ajax({
-							            url: "../regista/searchRegistiAjax",
+							            url: "../edit/searchRegistiAjax",
 							            datatype: "json",
 							            data: {
 							                term: request.term,   

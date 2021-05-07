@@ -15,10 +15,9 @@ public class RegistaServiceImpl implements RegistaService {
 	@Autowired
 	private RegistaRepository repository;
 
-
 	@Transactional(readOnly = true)
 	public List<Regista> listAllElements() {
-		return (List<Regista>)repository.findAll();
+		return (List<Regista>) repository.findAll();
 	}
 
 	@Transactional(readOnly = true)
@@ -28,7 +27,7 @@ public class RegistaServiceImpl implements RegistaService {
 
 	@Transactional(readOnly = true)
 	public Regista caricaSingoloElementoConFilms(Long id) {
-		return null;
+		return repository.findSingleRegistaEager(id);
 	}
 
 	@Transactional
