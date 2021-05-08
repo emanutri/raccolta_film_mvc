@@ -59,8 +59,11 @@ public class FilmController {
 
 		// se il regista è valorizzato dobbiamo provare a caricarlo perché
 		// ci aiuta in pagina
-		if (film.getRegista() != null && film.getRegista().getId() != null)
+		if (film.getRegista() != null && film.getRegista().getId() != null) {
 			film.setRegista(registaService.caricaSingoloElemento(film.getRegista().getId()));
+		} else {
+			result.reject("regista");
+		}
 
 		if (result.hasErrors()) {
 			return "film/insert";
@@ -89,45 +92,51 @@ public class FilmController {
 		model.addAttribute("show_film_attr", filmService.caricaSingoloElementoEager(idFilm));
 		return "film/show";
 	}
-	
+
 	@GetMapping("/edit/{idFilm}")
 	public String editFilm(@PathVariable(required = true) Long idFilm, Model model) {
 		model.addAttribute("registi_list_attribute", registaService.listAllElements());
 		model.addAttribute("film_attribute", filmService.caricaSingoloElementoEager(idFilm));
 		return "film/edit";
 	}
-	
+
 	@PostMapping("/edit/update")
-	public String updateFilm(@Valid @ModelAttribute("film_attribute") Film film, @Valid @ModelAttribute("idFilm") Long idFilm, BindingResult result,
-			RedirectAttributes redirectAttrs) {
-		
+	public String updateFilm(@Valid @ModelAttribute("film_attribute") Film film,
+			@Valid @ModelAttribute("idFilm") Long idFilm, BindingResult result, RedirectAttributes redirectAttrs) {
+
+		if (film.getRegista() != null && film.getRegista().getId() != null) {
+			film.setRegista(registaService.caricaSingoloElemento(film.getRegista().getId()));
+		} else {
+			result.rejectValue("regista", "regista.notnull");
+		}
+
 		if (result.hasErrors()) {
 			return "film/edit";
 		}
 
 		film.setId(idFilm);
 		filmService.aggiorna(film);
-		
+
 		redirectAttrs.addFlashAttribute("successMessage", "Operazione eseguita correttamente");
 		return "redirect:/film";
 	}
-	
+
 	@GetMapping("/delete/{idFilm}")
 	public String controllaDeleteFilm(@PathVariable(required = true) Long idFilm, Model model) {
 		model.addAttribute("film_delete", filmService.caricaSingoloElementoEager(idFilm));
 		return "/film/delete";
 	}
-	
+
 	@PostMapping("/delete/execute")
 	public String controllaDeleteFilm(@Valid @ModelAttribute("idFilm") Long idFilm, BindingResult result,
 			RedirectAttributes redirectAttrs) {
 
 		filmService.rimuovi(filmService.caricaSingoloElemento(idFilm));
-		
+
 		redirectAttrs.addFlashAttribute("successMessage", "Operazione eseguita correttamente");
 		return "redirect:/film";
 	}
-	
+
 	@GetMapping(value = "/edit/searchRegistiAjax", produces = { MediaType.APPLICATION_JSON_VALUE })
 	public @ResponseBody String searchRegista(@RequestParam String term) {
 
@@ -147,5 +156,5 @@ public class FilmController {
 
 		return new Gson().toJson(ja);
 	}
-	
+
 }
